@@ -1,6 +1,6 @@
 {
   "name": "sit-connect",
-  "main": "expo-router/entry",
+  "main": "expo/AppEntry.js",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
@@ -23,7 +23,6 @@
     "expo-haptics": "~15.0.8",
     "expo-image": "~3.0.11",
     "expo-linking": "~8.0.10",
-    "expo-router": "~6.0.17",
     "expo-splash-screen": "~31.0.12",
     "expo-sqlite": "~16.0.10",
     "expo-status-bar": "~3.0.9",
