@@ -1,7 +1,6 @@
 import * as SQLite from "expo-sqlite";
 import { SitterType } from "../types";
 
-// Modern Expo SQLite uses async/await pattern
 let db: SQLite.SQLiteDatabase | null = null;
 
 /**

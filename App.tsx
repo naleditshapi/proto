@@ -2,25 +2,34 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Platform, StyleSheet, Text, View } from 'react-native';
 import { initDatabase } from './src/database/db';
+import { AppNavigator } from './src/navigation/AppNavigator';
 
+/**
+ * Main App Component
+ * 
+ * Flow:
+ * 1. App mounts
+ * 2. useEffect runs database initialization
+ * 3. Show loading screen while database sets up
+ * 4. Once ready, show AppNavigator (which shows RoleSelectionScreen first)
+ */
 export default function App() {
     const [dbReady, setDbReady] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        // Check if we're running on a platform that supports SQLite
+        // Platform check: SQLite only works on iOS/Android
         if (Platform.OS === 'web') {
-            // Web doesn't support SQLite - show message instead
             setError('web_not_supported');
             return;
         }
 
-        // Initialize database for iOS/Android
+        // Initialize database
         const setup = async () => {
             try {
-                console.log('🚀 Starting database initialization...');
+                console.log('🚀 Starting app initialization...');
                 await initDatabase();
-                console.log('✅ Database initialization complete');
+                console.log('✅ App initialization complete');
                 setDbReady(true);
             } catch (err) {
                 console.error('❌ Setup error:', err);
@@ -29,9 +38,9 @@ export default function App() {
         };
 
         setup();
-    }, []); // Empty dependency array = run once when component mounts
+    }, []);
 
-    // Special handling for web platform
+    // Web platform not supported
     if (error === 'web_not_supported') {
         return (
             <View style={styles.container}>
@@ -53,7 +62,7 @@ export default function App() {
         );
     }
 
-    // Handle other errors
+    // Other errors
     if (error) {
         return (
             <View style={styles.container}>
@@ -65,26 +74,24 @@ export default function App() {
         );
     }
 
-    // Show loading spinner while database initializes
+    // Loading state
     if (!dbReady) {
         return (
             <View style={styles.container}>
                 <StatusBar style="auto" />
                 <ActivityIndicator size="large" color="#2196F3" />
-                <Text style={styles.loadingText}>Initializing database...</Text>
-                <Text style={styles.hint}>This should only take a moment</Text>
+                <Text style={styles.loadingText}>Initializing SitConnect...</Text>
+                <Text style={styles.hint}>Setting up database</Text>
             </View>
         );
     }
 
-    // Success! Database is ready
+    // Success! Show the app
     return (
-        <View style={styles.container}>
+        <>
             <StatusBar style="auto" />
-            <Text style={styles.success}>✅ Database Ready!</Text>
-            <Text style={styles.text}>Check the console for initialization logs</Text>
-            <Text style={styles.hint}>Platform: {Platform.OS}</Text>
-        </View>
+            <AppNavigator />
+        </>
     );
 }
 
@@ -96,12 +103,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 20,
     },
-    success: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#4CAF50',
-        marginBottom: 10,
-    },
     error: {
         fontSize: 24,
         fontWeight: 'bold',
@@ -112,12 +113,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#666',
         marginBottom: 10,
-        textAlign: 'center',
-    },
-    text: {
-        fontSize: 16,
-        color: '#666',
-        marginTop: 10,
         textAlign: 'center',
     },
     loadingText: {
